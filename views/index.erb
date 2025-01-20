@@ -1,13 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sv">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projekt #2</title>
-    <link rel="stylesheet" type="text/css" href="/style.css?<%=Time.now.to_i%>">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skapa Träningsprogram</title>
+  <link rel="stylesheet" href="/style.css"> <!-- Länka till din CSS-fil -->
 </head>
 <body>
-  <h1>Webbserverprogrammering 1 - Projekt 3 - mall</h1>
-  <img src="/img/glhf.png">
+  <div class="container">
+    <h1>Skapa Ditt Träningsprogram</h1>
+
+    <!-- Formulär -->
+    <form action="/submit" method="POST">
+      <label for="goal">Vad är ditt mål?</label>
+      <select name="goal" id="goal">
+        <option value="weight_loss">Gå ner i vikt</option>
+        <option value="muscle_gain">Bygga muskler</option>
+        <option value="general_health">Allmän hälsa</option>
+      </select>
+
+      <label for="time_per_week">Hur mycket tid kan du träna per vecka? (1-7 dagar)</label>
+      <input type="number" name="time_per_week" id="time_per_week" min="1" max="7" value="3" required>
+
+      <label for="time_per_session">Hur länge kan du träna per pass? (30-300 minuter)</label>
+      <input type="number" name="time_per_session" id="time_per_session" min="30" max="300" value="60" step="10" required>
+
+
+      <button type="submit">Skapa mitt träningsprogram</button>
+    </form>
+
+    <!-- Om träningsprogrammet genereras, visa det här -->
+    <% if defined? training_plan %>
+      <div class="training-plan">
+        <h2>Ditt träningsprogram:</h2>
+        <p><%= training_plan %></p>
+      </div>
+    <% end %>
+  </div>
 </body>
 </html>
