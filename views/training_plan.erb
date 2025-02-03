@@ -3,26 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Träningsprogram</title>
-    <style>
-        .training-plan {
-            width: 300px;
-            margin: 20px;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            background-color: #f9f9f9;
-        }
-    </style>
+    <title>Ditt Träningsprogram</title>
+    <link rel="stylesheet" href="/training_plan.css">
 </head>
 <body>
-    <h1>Träningsprogram</h1>
-    <div class="training-plan">
-        <h2>Ditt träningsprogram baserat på dina val:</h2>
-        <p><strong>Mål:</strong> <%= training_plan %></p>
-    </div>
+    <div class="container">
+        <div class="training-plan">
+            <h1>Ditt Träningsprogram</h1>
+            <p>Här är ditt personliga träningsprogram baserat på dina val:</p>
 
-    <br>
-    <a href="/">Tillbaka till startsidan</a>
+            <!-- Träningsprogram -->
+            <div>
+                <h2>Träningsschema:</h2>
+                <% training_plan.each do |day| %>
+                    <div>
+                        <strong><%= day[:day] %>:</strong> <%= day[:type] %>
+                        <% if day[:type] == "Träningspass" %>
+                            <ul>
+                                <% day[:exercises].each do |exercise| %>
+                                    <li><%= exercise %> - Tid: <%= day[:time] %> min</li>
+                                <% end %>
+                            </ul>
+                        <% end %>
+                    </div>
+                <% end %>
+            </div>
+
+            <br>
+            <a href="/">Tillbaka</a>
+        </div>
+
+        <div class="calendar">
+            <% week_schedule.each_with_index do |day, index| %>
+                <div class="day <%= 'training' if day == 'Träningspass' %> <%= 'rest' if day == 'Vilodag' %>">
+                    <%= get_day_name(index) %> <br> <%= day %>
+                </div>
+            <% end %>
+        </div>
+    </div>
 </body>
 </html>

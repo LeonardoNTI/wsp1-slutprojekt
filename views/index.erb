@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Skapa Träningsprogram</title>
-  <link rel="stylesheet" href="/style.css"> <!-- Länka till din CSS-fil -->
+  <link rel="stylesheet" href="/style.css">
 </head>
 <body>
   <div class="container">
@@ -25,17 +25,8 @@
       <label for="time_per_session">Hur länge kan du träna per pass? (30-300 minuter)</label>
       <input type="number" name="time_per_session" id="time_per_session" min="30" max="300" value="60" step="10" required>
 
-
       <button type="submit">Skapa mitt träningsprogram</button>
     </form>
-
-    <!-- Om träningsprogrammet genereras, visa det här -->
-    <% if defined? training_plan %>
-      <div class="training-plan">
-        <h2>Ditt träningsprogram:</h2>
-        <p><%= training_plan %></p>
-      </div>
-    <% end %>
   </div>
 </body>
 </html>

@@ -9,57 +9,66 @@ class App < Sinatra::Base
 
   # Hantera när användaren svarar på frågorna
   post '/submit' do
-    # Spara svaren på frågorna
-    time = params[:time].to_i
-    experience = params[:experience].to_i
-    goal = params[:goal] || []  # Flera mål kan väljas
-    intensity = params[:intensity].to_i
-    duration = params[:duration].to_i
+    goal = params[:goal]  # Exempel: "weight_loss", "muscle_gain", "general_health"
+    days_per_week = params[:time_per_week].to_i  # Hur många dagar per vecka
+    time_per_session = params[:time_per_session].to_i  # Hur länge per pass
 
-    # Skapa ett träningsprogram baserat på svaren
-    training_plan = generate_training_plan(time, experience, goal, intensity, duration)
+    training_plan, week_schedule = generate_training_plan(goal, days_per_week, time_per_session)
 
-    # Returnera träningsprogrammet direkt som HTML
-    erb :training_plan, locals: { training_plan: training_plan }
+    erb :training_plan, locals: { training_plan: training_plan, week_schedule: week_schedule }
   end
 
-  # Generera träningsplan baserat på svaren
-  def generate_training_plan(time, experience, goal, intensity, duration)
-    plan = ""
+  # Generera träningsplan baserat på användarens val
+  def generate_training_plan(goal, days, time)
+    week_schedule = Array.new(7, "Vilodag")  # Alla dagar som vilodagar till att börja med
 
-    # Mål
-    if goal.include?("1")
-      plan += "Träningsprogram för viktminskning.\n"
-    end
-    if goal.include?("2")
-      plan += "Träningsprogram för muskelbyggande.\n"
-    end
-    if goal.include?("3")
-      plan += "Träningsprogram för allmän hälsa.\n"
+    # Fördela träningsdagarna på veckans dagar jämnt
+    (0...days).each do |i|
+      week_schedule[(i * 2) % 7] = "Träningspass"  # Fördela träningsdagarna jämnt med vilodagar mellan
     end
 
-    # Intensitet
-    if intensity >= 4
-      plan += "Högintensiv träning, fokus på tunga övningar.\n"
-    else
-      plan += "Lågintensiv träning med fokus på uthållighet.\n"
-    end
+    exercises = {
+      "weight_loss" => [
+        ["HIIT", "Burpees", "Jump Squats", "Mountain Climbers", "Löpning"],
+        ["Roddmaskin", "Snabba steg", "Core-träning", "Box Jumps"]
+      ],
+      "muscle_gain" => [
+        ["Bänkpress", "Axelpress", "Dips", "Tricepspress"],
+        ["Marklyft", "Rodd", "Chins", "Bicepscurls"],
+        ["Knäböj", "Utfall", "Vadpress", "Leg Curl"]
+      ],
+      "general_health" => [
+        ["Jogging", "Cykling", "Stretching", "Lätt styrka"],
+        ["Yoga", "Pilates", "Simning", "Core-träning"]
+      ]
+    }
 
-    # Tid per vecka
-    plan += "Du kan träna #{time} dagar per vecka.\n"
+    selected_exercises = exercises[goal] || exercises["general_health"]
     
-    # Duration per pass
-    plan += "Varje pass kommer att vara ungefär #{duration} minuter.\n"
-
-    # Lägg till erfarenhet
-    if experience <= 2
-      plan += "Rekommenderat: Nybörjarprogram med grundläggande övningar."
-    elsif experience <= 4
-      plan += "Rekommenderat: Mellannivåprogram med ökad intensitet."
-    else
-      plan += "Rekommenderat: Avancerat program med tunga lyft och komplexa övningar."
+    # Skapa träningsprogrammet
+    training_plan = []
+    week_schedule.each_with_index do |day, index|
+      if day == "Träningspass"
+        # Välj övningar beroende på träningsmål och tid
+        exercise_group = selected_exercises[index % selected_exercises.length]
+        num_exercises = case time
+                        when 0..30 then 2
+                        when 31..60 then 3
+                        else 4
+                        end
+        selected_exercises_for_day = exercise_group.sample(num_exercises)
+        training_plan << { day: get_day_name(index), type: day, exercises: selected_exercises_for_day, time: time }
+      else
+        training_plan << { day: get_day_name(index), type: day }
+      end
     end
 
-    plan
+    return training_plan, week_schedule
+  end
+
+  # En hjälpfunktion för att få namn på veckodagar
+  def get_day_name(index)
+    days = ["Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag", "Söndag"]
+    days[index]
   end
 end
