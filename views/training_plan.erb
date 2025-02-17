@@ -1,45 +1,27 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ditt Träningsprogram</title>
-    <link rel="stylesheet" href="/training_plan.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= @training_plan['name'] %></title>
 </head>
 <body>
-    <div class="container">
-        <div class="training-plan">
-            <h1>Ditt Träningsprogram</h1>
-            <p>Här är ditt personliga träningsprogram baserat på dina val:</p>
+  <h2><%= @training_plan['name'] %></h2>
+  <p><%= @training_plan['description'] %></p>
+  <p>Goal: <%= @training_plan['goal'] %></p>
 
-            <!-- Träningsprogram -->
-            <div>
-                <h2>Träningsschema:</h2>
-                <% training_plan.each do |day| %>
-                    <div>
-                        <strong><%= day[:day] %>:</strong> <%= day[:type] %>
-                        <% if day[:type] == "Träningspass" %>
-                            <ul>
-                                <% day[:exercises].each do |exercise| %>
-                                    <li><%= exercise %> - Tid: <%= day[:time] %> min</li>
-                                <% end %>
-                            </ul>
-                        <% end %>
-                    </div>
-                <% end %>
-            </div>
+  <h3>Logga din progress</h3>
+  <form action="/progress" method="post">
+    <label for="type">Typ (t.ex. vikt, bänkpress):</label><br>
+    <input type="text" id="type" name="type" required><br><br>
+    <label for="value">Värde:</label><br>
+    <input type="number" step="0.1" id="value" name="value" required><br><br>
+    <label for="date">Datum:</label><br>
+    <input type="date" id="date" name="date" required><br><br>
+    <input type="submit" value="Logga progress">
+  </form>
 
-            <br>
-            <a href="/">Tillbaka</a>
-        </div>
-
-        <div class="calendar">
-            <% week_schedule.each_with_index do |day, index| %>
-                <div class="day <%= 'training' if day == 'Träningspass' %> <%= 'rest' if day == 'Vilodag' %>">
-                    <%= get_day_name(index) %> <br> <%= day %>
-                </div>
-            <% end %>
-        </div>
-    </div>
+  <br>
+  <p><a href="/training_plans">Tillbaka till träningsplaner</a></p>
 </body>
 </html>

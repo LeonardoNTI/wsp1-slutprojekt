@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Träningsplaner</title>
+</head>
+<body>
+  <h2>Träningsplaner</h2>
+  <ul>
+    <% @training_plans.each do |plan| %>
+      <li><a href="/training_plans/<%= plan['id'] %>"><%= plan['name'] %></a></li>
+    <% end %>
+  </ul>
+  <br>
+  <p><a href="/logout">Logga ut</a></p>
+</body>
+</html>

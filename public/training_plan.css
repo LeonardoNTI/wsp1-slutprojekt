@@ -9,7 +9,7 @@ body {
 }
 
 h1 {
-    font-size: 26px;  /* Minskat från 30px */
+    font-size: 26px;
     font-weight: 600;
     text-align: center;
     margin-top: 50px;
@@ -18,7 +18,7 @@ h1 {
 
 .container {
     display: flex;
-    justify-content: space-between; /* Ensures both elements are side by side */
+    justify-content: space-between;
     align-items: flex-start;
     gap: 20px;
     padding: 20px;
@@ -26,7 +26,7 @@ h1 {
     margin: 0 auto;
     width: 100%;
     box-sizing: border-box;
-    flex-wrap: wrap; /* Ensures responsiveness */
+    flex-wrap: wrap;
 }
 
 /* Sektion för träningsplanen */
@@ -35,12 +35,11 @@ h1 {
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    width: 60%;  /* Width of the training plan */
-    max-width: auto;
-    height: 550px;
+    width: 60%;
+    height: 550px; /* Set a fixed height to contain the content */
     text-align: left;
-    margin-top: 0;  /* Ensure it's aligned properly */
-    overflow: hidden;
+    margin-top: 0;
+    overflow-y: auto; /* Enables scrolling when content overflows */
     font-size: 12px;
 }
 
@@ -55,7 +54,7 @@ h1 {
     padding: 0;
     margin: 0;
     display: flex;
-    flex-wrap: wrap;  /* Wrap the list if it's too long */
+    flex-wrap: wrap;
     gap: 10px;
 }
 
@@ -66,7 +65,7 @@ h1 {
     border-radius: 6px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     font-size: 12px;
-    width: 48%;  /* Each item takes up about half the row */
+    width: 48%;
 }
 
 .training-plan a {
@@ -82,15 +81,15 @@ h1 {
 /* Kalender */
 .calendar {
     display: grid;
-    grid-template-columns: 1fr;  /* Calendar stays vertical */
+    grid-template-columns: 1fr;
     gap: 10px;
-    margin-top: 0;  /* Remove extra margin to keep it aligned */
-    width: 35%;  /* Calendar takes up 35% of the screen */
+    margin-top: 0;
+    width: 35%;
 }
 
 .day {
     width: 100%;
-    height: 60px;  /* Adjust height for better fit */
+    height: 60px;
     border: 1px solid #ccc;
     display: flex;
     justify-content: center;

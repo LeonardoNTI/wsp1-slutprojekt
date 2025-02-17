@@ -2,7 +2,7 @@ task :seed do
     require "bundler"
     Bundler.require
     require_relative 'db/seeder'
-    Seeder.seed!
+    Seeder.seed
 end
 
 task :dev do
