@@ -12,6 +12,11 @@
       <li><a href="/training_plans/<%= plan['id'] %>"><%= plan['name'] %></a></li>
     <% end %>
   </ul>
+
+  <% if @training_plans.empty? %>
+    <p>Du har ingen träningsplan. <a href="/index">Skapa en nu!</a></p>
+  <% end %>
+
   <br>
   <p><a href="/logout">Logga ut</a></p>
 </body>

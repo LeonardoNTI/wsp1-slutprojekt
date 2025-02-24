@@ -1,141 +1,142 @@
-require 'sinatra'
+require 'sinatra/base'
 require 'sqlite3'
 require 'bcrypt'
 
-# Initiera databasanslutningen
-def db
-  SQLite3::Database.new 'db/training_app.sqlite'
-end
+class App < Sinatra::Base
+  enable :sessions
 
-# Skapa träningsplan
-def generate_training_plan(goal, time_per_week, time_per_session)
-  exercises = {
-    weight_loss: ['Löpning', 'Cykling', 'Kettlebell svingar', 'Burpees'],
-    muscle_gain: ['Bänkpress', 'Knäböj', 'Marklyft', 'Axelpress'],
-    general_health: ['Yoga', 'Simning', 'Cykling', 'Löpning']
-  }
+  # Initiera databasanslutningen
+  def db
+    SQLite3::Database.new('db/training_app.sqlite', results_as_hash: true)
+  end
 
-  # Välj övningar baserat på målet
-  selected_exercises = exercises[goal.to_sym]
+  # Start-sida
+  get '/' do
+    if session[:user_id]
+      redirect '/training_plans'
+    else
+      redirect '/login'
+    end
+  end
 
-  # Skapa träningsplanen
-  training_plan = {
-    name: "#{goal.capitalize} Plan",
-    description: "Träningsplan baserad på målet: #{goal.capitalize}",
-    exercises: selected_exercises,
-    goal: goal,
-    time_per_week: time_per_week,
-    time_per_session: time_per_session
-  }
-
-  return training_plan
-end
-
-# Visa inloggningssidan
-get '/login' do
-  erb :login
-end
-
-# Hantera inloggning
-post '/login' do
-  username = params[:username]
-  password = params[:password]
-
-  db = db()
-  user = db.execute('SELECT * FROM users WHERE username = ?', username).first
-
-  if user && BCrypt::Password.new(user[2]) == password
-    session[:user_id] = user[0]  # Spara användarens id i sessionen
-    redirect '/training_plans'
-  else
-    @error = "Felaktigt användarnamn eller lösenord"
+  # INLOGGNING & REGISTRERING 
+  get '/login' do
     erb :login
   end
-end
 
-# Visa registreringssidan
-get '/register' do
-  erb :register
-end
+  post '/login' do
+    username = params[:username]
+    password = params[:password]
 
-# Hantera registrering
-post '/register' do
-  username = params[:username]
-  password = params[:password]
-  password_hash = BCrypt::Password.create(password)
+    user = db.execute('SELECT * FROM users WHERE username = ?', [username]).first
 
-  db = db()
-  db.execute('INSERT INTO users (username, password) VALUES (?, ?)', [username, password_hash])
+    if user && BCrypt::Password.new(user['password']) == password
+      session[:user_id] = user['id']
+      session[:role] = user['role']  # Sparar admin-roll om den finns
+      redirect '/training_plans'
+    else
+      @error = "Felaktigt användarnamn eller lösenord"
+      erb :login
+    end
+  end
 
-  session[:user_id] = db.last_insert_row_id
-  redirect '/training_plans'
-end
+  get '/register' do
+    erb :register
+  end
 
-# Visa träningsplaner
-get '/training_plans' do
-  db = db()
-  user_id = session[:user_id]
+  post '/register' do
+    username = params[:username]
+    password = params[:password]
+    password_hash = BCrypt::Password.create(password)
 
-  # Hämta träningsplaner för den inloggade användaren
-  @training_plans = db.execute('SELECT * FROM training_plans WHERE user_id = ?', user_id)
+    db.execute('INSERT INTO users (username, password, role) VALUES (?, ?, ?)', [username, password_hash, 'user'])
 
-  erb :training_plans
-end
+    session[:user_id] = db.last_insert_row_id
+    session[:role] = 'user'
 
-# Skapa träningsprogram
-post '/submit' do
-  goal = params[:goal]
-  time_per_week = params[:time_per_week]
-  time_per_session = params[:time_per_session]
-
-  # Generera träningsplanen baserat på användarens input
-  @training_plan = generate_training_plan(goal, time_per_week, time_per_session)
-
-  # Spara träningsplanen i databasen
-  db = db()
-  db.execute('INSERT INTO training_plans (user_id, name, description, goal, time_per_week, time_per_session) 
-             VALUES (?, ?, ?, ?, ?, ?)', 
-             [session[:user_id], @training_plan[:name], @training_plan[:description], 
-              @training_plan[:goal], @training_plan[:time_per_week], @training_plan[:time_per_session]])
-
-  erb :training_plan
-end
-
-# Visa en specifik träningsplan
-get '/training_plans/:id' do
-  id = params[:id]
-  db = db()
-
-  # Hämta träningsplanen
-  @training_plan = db.execute('SELECT * FROM training_plans WHERE id = ?', id).first
-
-  erb :training_plan
-end
-
-# Logga progress
-post '/progress' do
-  type = params[:type]
-  value = params[:value]
-  date = params[:date]
-
-  db = db()
-  db.execute('INSERT INTO progress (user_id, date, value, type) VALUES (?, ?, ?, ?)', 
-             [session[:user_id], date, value, type])
-
-  redirect '/training_plans'
-end
-
-# Logga ut
-get '/logout' do
-  session.clear
-  redirect '/login'
-end
-
-# Huvudsida (För att kontrollera om användaren är inloggad)
-get '/' do
-  if session[:user_id]
     redirect '/training_plans'
-  else
+  end
+
+  # TRÄNINGSPLANER 
+  get '/training_plans' do
+    redirect '/login' unless session[:user_id]
+
+    # Hämta användarens träningsplaner
+    @training_plans = db.execute('SELECT * FROM training_plans WHERE user_id = ?', [session[:user_id]])
+
+    # Om användaren inte har några träningsplaner, skicka till formuläret för att skapa en
+    if @training_plans.empty?
+      redirect '/index'
+    else
+      erb :training_plans
+    end
+  end
+
+  # Visa formuläret för att skapa träningsplan
+  get '/index' do
+    erb :index
+  end
+
+  # Hantera skapande av träningsplan
+  post '/submit' do
+    redirect '/login' unless session[:user_id]
+
+    goal = params[:goal]
+    time_per_week = params[:time_per_week]
+    time_per_session = params[:time_per_session]
+
+    # Generera träningsplanen baserat på användarens input
+    training_plan = {
+      name: "#{goal.capitalize} Plan",
+      description: "Träningsplan för #{goal.capitalize}",
+      goal: goal,
+      time_per_week: time_per_week,
+      time_per_session: time_per_session
+    }
+
+    # Spara träningsplanen i databasen
+    db.execute('INSERT INTO training_plans (user_id, name, description, goal, time_per_week, time_per_session) 
+                VALUES (?, ?, ?, ?, ?, ?)', 
+                [session[:user_id], training_plan[:name], training_plan[:description], 
+                training_plan[:goal], training_plan[:time_per_week], training_plan[:time_per_session]])
+
+    redirect '/training_plans'
+  end
+
+  get '/training_plans/:id' do
+    redirect '/login' unless session[:user_id]
+
+    @training_plan = db.execute('SELECT * FROM training_plans WHERE id = ?', [params[:id]]).first
+    erb :training_plan
+  end
+
+  # PROGRESS-LOGGNING 
+  post '/progress' do
+    redirect '/login' unless session[:user_id]
+
+    type = params[:type]
+    value = params[:value]
+    date = params[:date]
+
+    db.execute('INSERT INTO progress (user_id, date, value, type) VALUES (?, ?, ?, ?)', 
+               [session[:user_id], date, value, type])
+
+    redirect '/training_plans'
+  end
+
+  # LOGGA UT 
+  get '/logout' do
+    session.clear
     redirect '/login'
+  end
+
+  # ADMIN-FUNKTION 
+  get '/admin' do
+    redirect '/login' unless session[:role] == 'admin'
+
+    @users = db.execute('SELECT * FROM users')
+    @plans = db.execute('SELECT * FROM training_plans')
+
+    erb :admin
   end
 end

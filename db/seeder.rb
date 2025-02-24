@@ -5,25 +5,28 @@ class Seeder
   def self.seed
     db = SQLite3::Database.new 'db/training_app.sqlite'
     
-    # Se till att databasen är tom innan vi börjar
+    # Se till att databasen är tom innan jag börjar
     db.execute('DROP TABLE IF EXISTS users')
     db.execute('DROP TABLE IF EXISTS training_plans')
     db.execute('DROP TABLE IF EXISTS progress')
 
-    # Skapa tabeller
+    # Skapa tabellerna
     db.execute <<-SQL
       CREATE TABLE users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT NOT NULL,
-        password TEXT NOT NULL
+        password TEXT NOT NULL,
+        role TEXT NOT NULL DEFAULT 'user'
       );
     SQL
 
     db.execute <<-SQL
       CREATE TABLE training_plans (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,  -- Lägg till user_id här
         name TEXT NOT NULL,
-        description TEXT NOT NULL
+        description TEXT NOT NULL,
+        FOREIGN KEY(user_id) REFERENCES users(id)
       );
     SQL
 
@@ -38,18 +41,11 @@ class Seeder
       );
     SQL
 
-    # Lägg till en användare med rätt hashad lösenord
-    password = BCrypt::Password.create('password123')
-    db.execute('INSERT INTO users (username, password) VALUES (?, ?)', ['testuser', password])
-
-    # Lägg till träningsplaner
-    db.execute('INSERT INTO training_plans (name, description) VALUES (?, ?)', ['Plan A', 'Description for Plan A'])
-    db.execute('INSERT INTO training_plans (name, description) VALUES (?, ?)', ['Plan B', 'Description for Plan B'])
-    db.execute('INSERT INTO training_plans (name, description) VALUES (?, ?)', ['Plan C', 'Description for Plan C'])
-
-    # Lägg till lite progressdata för användaren
-    db.execute('INSERT INTO progress (user_id, date, value, type) VALUES (?, ?, ?, ?)', [1, '2025-01-01', 70.0, 'vikt'])
-    db.execute('INSERT INTO progress (user_id, date, value, type) VALUES (?, ?, ?, ?)', [1, '2025-01-02', 69.5, 'vikt'])
+    # Lägg till en användare med rätt hashad lösenord och admin-roll
+    password1 = BCrypt::Password.create('123')
+    password2 = BCrypt::Password.create('123')
+    db.execute('INSERT INTO users (username, password, role) VALUES (?, ?, ?)', ['Leo', password1, 'admin'])
+    db.execute('INSERT INTO users (username, password, role) VALUES (?, ?, ?)', ['Hannes', password2, 'user'])
 
     puts "Seeder executed successfully!"
   end
