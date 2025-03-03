@@ -49,6 +49,17 @@ class Seeder
     db.execute('INSERT INTO users (username, password, role) VALUES (?, ?, ?)', ['Leo', password1, 'admin'])
     db.execute('INSERT INTO users (username, password, role) VALUES (?, ?, ?)', ['Hannes', password2, 'user'])
 
+    # Lägg till träningsplaner för användarna
+    user1_id = db.execute('SELECT id FROM users WHERE username = ?', ['Leo']).first[0]  # Hämta id:t som första element i arrayen
+    user2_id = db.execute('SELECT id FROM users WHERE username = ?', ['Hannes']).first[0]  # Hämta id:t som första element i arrayen
+
+    # Lägg till träningsplaner för Leo (admin)
+    db.execute('INSERT INTO training_plans (user_id, name, description, goal, time_per_session, schedule) VALUES (?, ?, ?, ?, ?, ?)', [user1_id, 'Muskelplan', 'Plan för att bygga muskler', 'Muskeltillväxt', 60, 'Måndag, Onsdag, Fredag'])
+    db.execute('INSERT INTO training_plans (user_id, name, description, goal, time_per_session, schedule) VALUES (?, ?, ?, ?, ?, ?)', [user1_id, 'Viktminskning', 'Plan för att bränna fett och gå ner i vikt', 'Viktnedgång', 45, 'Tisdag, Torsdag'])
+
+    # Lägg till träningsplaner för Hannes (user)
+    db.execute('INSERT INTO training_plans (user_id, name, description, goal, time_per_session, schedule) VALUES (?, ?, ?, ?, ?, ?)', [user2_id, 'Generell Hälsa', 'En plan för att hålla sig aktiv och frisk', 'Generell Hälsa', 30, 'Måndag, Onsdag, Fredag'])
+
     puts "Seeder executed successfully!"
   end
 end

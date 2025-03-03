@@ -7,7 +7,8 @@ class TrainingGenerator
     "core" => ["Plank", "Russian Twists", "Sit-ups", "Leg Raises"]
   }
 
-  CARDIO_EXERCISES = ["Löpning", "Cykling", "HIIT", "Burpees", "Jumping Jacks", "Rowing", "Jump Rope"]
+  CARDIO_EXERCISES = ["Löpning", "Cykling", "Högintensiv intervallträning (HIIT)", "Burpees", "Jumping Jacks", "Rodd", "Hopprep"]
+  LIGHT_CARDIO_EXERCISES = ["Gång", "Cykling", "Simning", "Lätt jogging", "Raska promenader"]
 
   def self.generate_schedule(goal, time_per_week, time_per_session)
     schedule = {}
@@ -35,7 +36,8 @@ class TrainingGenerator
     exercises_per_session = (time_per_session.to_i / 10).clamp(1, 4)
 
     # Skapa schemat baserat på målet
-    if goal == "muscle_gain"
+    case goal
+    when "muscle_gain"
       # Styrketräning: Rotera mellan muskelgrupper
       muscle_groups = EXERCISES_BY_GROUP.keys
       current_group_index = 0
@@ -50,12 +52,24 @@ class TrainingGenerator
           schedule["Dag #{day}"] = "Vilodag"
         end
       end
-    else
+
+    when "weight_loss"
       # Viktförlust: Kondition och helkroppsträning
       (1..7).each do |day|
         if training_days.include?(day)
           exercises = CARDIO_EXERCISES.sample(exercises_per_session).join(", ")
           schedule["Dag #{day}"] = "Kondition: #{exercises}"
+        else
+          schedule["Dag #{day}"] = "Vilodag"
+        end
+      end
+
+    when "general_health"
+      # Generell hälsa: Lättare träning, mindre intensiva övningar
+      (1..7).each do |day|
+        if training_days.include?(day)
+          exercises = (LIGHT_CARDIO_EXERCISES + EXERCISES_BY_GROUP.values.flatten).sample(exercises_per_session).join(", ")
+          schedule["Dag #{day}"] = "Allmän hälsa: #{exercises}"
         else
           schedule["Dag #{day}"] = "Vilodag"
         end

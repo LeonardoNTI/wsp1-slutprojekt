@@ -1,23 +1,13 @@
-<!DOCTYPE html>
-<html lang="sv">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Träningsplaner</title>
-</head>
-<body>
-  <h2>Träningsplaner</h2>
-  <ul>
-    <% @training_plans.each do |plan| %>
-      <li><a href="/training_plans/<%= plan['id'] %>"><%= plan['name'] %></a></li>
-    <% end %>
-  </ul>
+<h2>Träningsplaner</h2>
 
-  <% if @training_plans.empty? %>
-    <p>Du har ingen träningsplan. <a href="/index">Skapa en nu!</a></p>
-  <% end %>
+<% @training_plans.each do |plan| %>
+  <div>
+    <h3><%= plan['name'] %></h3>
+    <p><%= plan['description'] %></p>
+    <p>Goal: <%= plan['goal'] %></p>
+    <a href="/training_plans/<%= plan['id'] %>">Visa detaljer</a>
+  </div>
+<% end %>
 
-  <br>
-  <p><a href="/logout">Logga ut</a></p>
-</body>
-</html>
+<!-- Länk för att skapa en ny träningsplan -->
+<a href="/index">Skapa ny träningsplan</a>

@@ -58,13 +58,12 @@ class App < Sinatra::Base
     redirect '/training_plans'
   end
 
-  # TRÄNINGSPLANER 
   get '/training_plans' do
     redirect '/login' unless session[:user_id]
-
+  
     # Hämta användarens träningsplaner
     @training_plans = db.execute('SELECT * FROM training_plans WHERE user_id = ?', [session[:user_id]])
-
+  
     # Om användaren inte har några träningsplaner, skicka till formuläret för att skapa en
     if @training_plans.empty?
       redirect '/index'
@@ -72,13 +71,12 @@ class App < Sinatra::Base
       erb :training_plans
     end
   end
-
+  
   # Visa formuläret för att skapa träningsplan
   get '/index' do
     erb :index
   end
 
-  # Hantera skapande av träningsplan
   post '/submit' do
     redirect '/login' unless session[:user_id]
   
@@ -89,21 +87,30 @@ class App < Sinatra::Base
     # Generera träningsschemat
     schedule = TrainingGenerator.generate_schedule(goal, time_per_week, time_per_session)
   
+    # Omvandla schemat till en enkel sträng (komma-separerad eller annat format)
+    schedule_string = schedule.map { |day, activity| "#{day}: #{activity}" }.join(", ")
+  
     # Spara träningsplanen i databasen
     db.execute('INSERT INTO training_plans (user_id, name, description, goal, time_per_session, schedule) 
                 VALUES (?, ?, ?, ?, ?, ?)', 
                 [session[:user_id], "#{goal.capitalize} Plan", "Träningsplan för #{goal.capitalize}", 
-                goal, time_per_session, schedule.to_json])
+                goal, time_per_session, schedule_string])
   
     redirect '/training_plans'
-  end
+  end  
 
+  # Visa en specifik träningsplan
   get '/training_plans/:id' do
     redirect '/login' unless session[:user_id]
 
     @training_plan = db.execute('SELECT * FROM training_plans WHERE id = ?', [params[:id]]).first
+
+    # Hämta schemat som en vanlig sträng (ingen JSON.parse behövs)
+    @schedule = @training_plan['schedule']  # Detta är nu bara en enkel sträng
+
     erb :training_plan
   end
+
 
   # PROGRESS-LOGGNING 
   post '/progress' do

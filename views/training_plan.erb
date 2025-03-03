@@ -11,11 +11,7 @@
   <p>Goal: <%= @training_plan['goal'] %></p>
 
   <h3>Veckoschema</h3>
-  <ul>
-    <% JSON.parse(@training_plan['schedule']).each do |day, activity| %>
-      <li><strong><%= day %>:</strong> <%= activity %></li>
-    <% end %>
-  </ul>
+  <p><%= @schedule %></p>  <!-- Här visar vi den enkla strängen som vi hämtade från databasen -->
 
   <h3>Logga din progress</h3>
   <form action="/progress" method="post">
