@@ -10,6 +10,13 @@
   <p><%= @training_plan['description'] %></p>
   <p>Goal: <%= @training_plan['goal'] %></p>
 
+  <h3>Veckoschema</h3>
+  <ul>
+    <% JSON.parse(@training_plan['schedule']).each do |day, activity| %>
+      <li><strong><%= day %>:</strong> <%= activity %></li>
+    <% end %>
+  </ul>
+
   <h3>Logga din progress</h3>
   <form action="/progress" method="post">
     <label for="type">Typ (t.ex. vikt, bänkpress):</label><br>

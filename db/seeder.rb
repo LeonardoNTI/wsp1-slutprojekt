@@ -23,10 +23,12 @@ class Seeder
     db.execute <<-SQL
       CREATE TABLE training_plans (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER NOT NULL,  -- Lägg till user_id här
+        user_id INTEGER NOT NULL,
         name TEXT NOT NULL,
         description TEXT NOT NULL,
-        FOREIGN KEY(user_id) REFERENCES users(id)
+        goal TEXT NOT NULL,
+        time_per_session INTEGER,
+        schedule TEXT  -- Nytt fält för att spara schemat
       );
     SQL
 

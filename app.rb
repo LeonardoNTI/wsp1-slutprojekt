@@ -1,6 +1,7 @@
 require 'sinatra/base'
 require 'sqlite3'
 require 'bcrypt'
+require_relative 'training_generator'
 
 class App < Sinatra::Base
   enable :sessions
@@ -80,26 +81,20 @@ class App < Sinatra::Base
   # Hantera skapande av träningsplan
   post '/submit' do
     redirect '/login' unless session[:user_id]
-
+  
     goal = params[:goal]
     time_per_week = params[:time_per_week]
     time_per_session = params[:time_per_session]
-
-    # Generera träningsplanen baserat på användarens input
-    training_plan = {
-      name: "#{goal.capitalize} Plan",
-      description: "Träningsplan för #{goal.capitalize}",
-      goal: goal,
-      time_per_week: time_per_week,
-      time_per_session: time_per_session
-    }
-
+  
+    # Generera träningsschemat
+    schedule = TrainingGenerator.generate_schedule(goal, time_per_week, time_per_session)
+  
     # Spara träningsplanen i databasen
-    db.execute('INSERT INTO training_plans (user_id, name, description, goal, time_per_week, time_per_session) 
+    db.execute('INSERT INTO training_plans (user_id, name, description, goal, time_per_session, schedule) 
                 VALUES (?, ?, ?, ?, ?, ?)', 
-                [session[:user_id], training_plan[:name], training_plan[:description], 
-                training_plan[:goal], training_plan[:time_per_week], training_plan[:time_per_session]])
-
+                [session[:user_id], "#{goal.capitalize} Plan", "Träningsplan för #{goal.capitalize}", 
+                goal, time_per_session, schedule.to_json])
+  
     redirect '/training_plans'
   end
 
