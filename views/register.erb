@@ -1,23 +1,18 @@
-<!DOCTYPE html>
-<html lang="sv">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registrera</title>
-</head>
-<body>
-  <h2>Registrera dig</h2>
-  <% if @error %>
-    <p style="color: red;"><%= @error %></p>
-  <% end %>
+<div class="container">
   <form action="/register" method="post">
-    <label for="username">Användarnamn:</label><br>
-    <input type="text" id="username" name="username" required><br><br>
-    <label for="password">Lösenord:</label><br>
-    <input type="password" id="password" name="password" required><br><br>
-    <input type="submit" value="Registrera">
+    <h2>Registrera dig</h2>
+    <% if @error %>
+      <p class="error"><%= @error %></p>
+    <% end %>
+    
+    <label for="username">Användarnamn:</label>
+    <input type="text" id="username" name="username" required>
+
+    <label for="password">Lösenord:</label>
+    <input type="password" id="password" name="password" required>
+
+    <input type="submit" value="Registrera" class="btn">
+    
+    <p>Har du redan ett konto? <a href="/login">Logga in här</a></p>
   </form>
-  <br>
-  <p>Har du redan ett konto? <a href="/login">Logga in här</a></p>
-</body>
-</html>
+</div>

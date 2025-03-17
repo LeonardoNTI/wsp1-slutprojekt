@@ -3,6 +3,9 @@ require 'sqlite3'
 require 'bcrypt'
 require_relative 'training_generator'
 
+set :public_folder, File.dirname(__FILE__) + '/public'
+
+
 class App < Sinatra::Base
   enable :sessions
 
@@ -111,7 +114,30 @@ class App < Sinatra::Base
     erb :training_plan
   end
 
+  post '/training_plans/:id/delete' do |id|
+    db.execute("DELETE FROM training_plans WHERE id = ?", id)
+    redirect '/training_plans'
+  end
 
+  get '/training_plans/:id/edit' do | id |
+    @training_plan = db.execute("SELECT * FROM training_plans WHERE id = ?", id).first
+    erb :"edit"
+  end
+
+  post '/training_plans/:id/update' do |id|
+    name = params[:name]
+    description = params[:description]
+    goal = params[:goal]
+    time_per_session = params[:time_per_session]
+    schedule = params[:schedule]
+  
+    db.execute("UPDATE training_plans SET name = ?, description = ?, goal = ?, time_per_session = ?, schedule = ? WHERE id = ?",
+               [name, description, goal, time_per_session, schedule, id])
+  
+    redirect "/training_plans/#{id}"
+  end
+  
+  
   # PROGRESS-LOGGNING 
   post '/progress' do
     redirect '/login' unless session[:user_id]

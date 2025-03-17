@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redigera Träningsplan</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Redigera Träningsplan</h1>
+
+    <!-- Formulär -->
+    <form action="/training_plans/<%= @training_plan['id'] %>/update" method="POST">
+      <label for="name">Namn på planen</label>
+      <input type="text" name="name" id="name" value="<%= @training_plan['name'] %>" required>
+
+      <label for="description">Beskrivning</label>
+      <textarea name="description" id="description" required><%= @training_plan['description'] %></textarea>
+
+      <label for="goal">Vad är ditt mål?</label>
+      <select name="goal" id="goal">
+        <option value="weight_loss" <% if @training_plan['goal'] == 'weight_loss' %>selected<% end %>>Gå ner i vikt</option>
+        <option value="muscle_gain" <% if @training_plan['goal'] == 'muscle_gain' %>selected<% end %>>Bygga muskler</option>
+        <option value="general_health" <% if @training_plan['goal'] == 'general_health' %>selected<% end %>>Allmän hälsa</option>
+      </select>
+
+      <label for="time_per_session">Hur länge kan du träna per pass? (30-300 minuter)</label>
+      <input type="number" name="time_per_session" id="time_per_session" min="30" max="300" value="<%= @training_plan['time_per_session'] %>" step="10" required>
+
+      <label for="schedule">Träningsschema</label>
+      <input type="text" name="schedule" id="schedule" value="<%= @training_plan['schedule'] %>" required>
+
+      <button type="submit">Spara ändringar</button>
+    </form>
+  </div>
+</body>
+</html>

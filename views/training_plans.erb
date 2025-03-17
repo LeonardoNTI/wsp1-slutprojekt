@@ -1,13 +1,18 @@
-<h2>Träningsplaner</h2>
+<div class="training-plans-container">
+  <h2>Träningsplaner</h2>
 
-<% @training_plans.each do |plan| %>
-  <div>
-    <h3><%= plan['name'] %></h3>
-    <p><%= plan['description'] %></p>
-    <p>Goal: <%= plan['goal'] %></p>
-    <a href="/training_plans/<%= plan['id'] %>">Visa detaljer</a>
+  <div class="plans-list">
+    <% @training_plans.each do |plan| %>
+      <div class="plan-item">
+        <h3><%= plan['name'] %></h3>
+        <p><%= plan['description'] %></p>
+        <a href="/training_plans/<%= plan['id'] %>" class="details-link">Visa detaljer</a>
+      </div>
+    <% end %>
+
+    <!-- Skapa ny plan box -->
+    <div class="plan-item create-plan">
+      <a href="/index">+</a>
+    </div>
   </div>
-<% end %>
-
-<!-- Länk för att skapa en ny träningsplan -->
-<a href="/index">Skapa ny träningsplan</a>
+</div>
