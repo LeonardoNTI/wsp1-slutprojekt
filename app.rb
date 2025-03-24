@@ -9,6 +9,21 @@ set :public_folder, File.dirname(__FILE__) + '/public'
 class App < Sinatra::Base
   enable :sessions
 
+  helpers do
+    def db
+      SQLite3::Database.new('db/training_app.sqlite', results_as_hash: true)
+    end
+  
+    def current_user
+      if session[:user_id]
+        db.execute('SELECT username FROM users WHERE id = ?', [session[:user_id]]).first
+      else
+        nil
+      end
+    end
+  end
+  
+  
   # Initiera databasanslutningen
   def db
     SQLite3::Database.new('db/training_app.sqlite', results_as_hash: true)
@@ -52,14 +67,13 @@ class App < Sinatra::Base
     username = params[:username]
     password = params[:password]
     password_hash = BCrypt::Password.create(password)
-
+  
     db.execute('INSERT INTO users (username, password, role) VALUES (?, ?, ?)', [username, password_hash, 'user'])
-
-    session[:user_id] = db.last_insert_row_id
-    session[:role] = 'user'
-
-    redirect '/training_plans'
+  
+    # Efter registrering, skicka användaren till inloggning
+    redirect '/login'
   end
+  
 
   get '/training_plans' do
     redirect '/login' unless session[:user_id]

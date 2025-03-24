@@ -1,18 +1,45 @@
-<div class="training-plans-container">
-  <h2>Träningsplaner</h2>
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Träningsplaner</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="training_plans_container">
+        <h2 class="training_plans_title">Träningsplaner</h2>
 
-  <div class="plans-list">
-    <% @training_plans.each do |plan| %>
-      <div class="plan-item">
-        <h3><%= plan['name'] %></h3>
-        <p><%= plan['description'] %></p>
-        <a href="/training_plans/<%= plan['id'] %>" class="details-link">Visa detaljer</a>
-      </div>
-    <% end %>
+        <div class="training_plans_list">
+            <% @training_plans.each do |plan| %>
+                <div class="training_plan_item">
+                    <button type="submit" class="training_plan_delete" onclick="deletePlan('<%= plan['id'] %>')">×</button>
+                    <h3 class="training_plan_name"><%= plan['name'] %></h3>
+                    <p class="training_plan_description"><%= plan['description'] %></p>
+                    <a href="/training_plans/<%= plan['id'] %>" class="training_plan_details_link">Visa detaljer</a>
+                </div>
+            <% end %>
 
-    <!-- Skapa ny plan box -->
-    <div class="plan-item create-plan">
-      <a href="/index">+</a>
+            <!-- Skapa ny plan box -->
+            <a href="/index" class="training_plan_create">
+                <span class="training_plan_create_icon">+</span>
+            </a>
+        </div>
     </div>
-  </div>
-</div>
+
+    <script>
+        function deletePlan(planId) {
+            if (confirm("Är du säker på att du vill ta bort denna träningsplan?")) {
+                fetch(`/training_plans/${planId}/delete`, { method: 'POST' })
+                    .then(response => {
+                        if (response.ok) {
+                            location.reload();
+                        } else {
+                            alert("Något gick fel, försök igen!");
+                        }
+                    });
+            }
+        }
+    </script>
+</body>
+</html>

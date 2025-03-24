@@ -4,11 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Träningsplan</title>
-    <link rel="stylesheet" type="text/css" href="/style.css"> 
+    <link rel="stylesheet" type="text/css" href="css/style.css"> 
 </head>
 <body>
+    <div class="user-info" style="position: absolute; top: 10px; right: 20px;">
+        <% if current_user %>
+            Inloggad som: <%= current_user['username'] %>
+            <form action="/logout" method="get" style="display: inline;">
+                <button type="submit" class="logout-btn">Logga ut</button>
+            </form>
+        <% else %>
+            Ej inloggad
+        <% end %>
+    </div>
 
     <%= yield %>
-
 </body>
 </html>

@@ -1,30 +1,48 @@
-<!DOCTYPE html>
-<html lang="sv">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= @training_plan['name'] %></title>
-</head>
-<body>
-  <h2><%= @training_plan['name'] %></h2>
-  <p><%= @training_plan['description'] %></p>
-  <p>Goal: <%= @training_plan['goal'] %></p>
+<div class="training_container">
+  <!-- Träningsdetaljer -->
+  <div class="training_details">
+    <h2 class="training_title"><%= @training_plan['name'] %></h2>
+    <p class="training_description"><%= @training_plan['description'] %></p>
+    <p class="training_goal"><strong>Mål:</strong> <%= @training_plan['goal'] %></p>
 
-  <h3>Veckoschema</h3>
-  <p><%= @schedule %></p>  <!-- Här visar vi den enkla strängen som vi hämtade från databasen -->
+    <!-- Progress Loggning -->
+    <h3 class="progress_title">Logga din progress</h3>
+    <form action="/progress" method="post" class="progress_form">
+      <label for="type" class="progress_label">Typ (t.ex. vikt, bänkpress):</label>
+      <input type="text" id="type" name="type" class="progress_input" required>
+      
+      <label for="value" class="progress_label">Värde:</label>
+      <input type="number" step="0.1" id="value" name="value" class="progress_input" required>
+      
+      <label for="date" class="progress_label">Datum:</label>
+      <input type="date" id="date" name="date" class="progress_input" required>
+      
+      <input type="submit" value="Logga progress" class="progress_btn">
+    </form>
+    
+    <div class="back_link">
+      <a href="/training_plans">← Tillbaka till träningsplaner</a>
+    </div>
+  </div>
 
-  <h3>Logga din progress</h3>
-  <form action="/progress" method="post">
-    <label for="type">Typ (t.ex. vikt, bänkpress):</label><br>
-    <input type="text" id="type" name="type" required><br><br>
-    <label for="value">Värde:</label><br>
-    <input type="number" step="0.1" id="value" name="value" required><br><br>
-    <label for="date">Datum:</label><br>
-    <input type="date" id="date" name="date" required><br><br>
-    <input type="submit" value="Logga progress">
-  </form>
-
-  <br>
-  <p><a href="/training_plans">Tillbaka till träningsplaner</a></p>
-</body>
-</html>
+  <!-- Schema -->
+  <div class="schedule_container">
+    <h3 class="schedule_title">Veckoschema</h3>
+    <div class="schedule">
+      <% @schedule.each do |day, exercises| %>
+        <div class="schedule_day <%= exercises.empty? ? 'rest-day' : 'training-day' %>">
+          <div class="day_name"><%= day %></div>
+          <% if exercises.empty? %>
+            Vilodag
+          <% else %>
+            <ul>
+              <% exercises.each do |exercise| %>
+                <li><%= exercise %></li>
+              <% end %>
+            </ul>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
