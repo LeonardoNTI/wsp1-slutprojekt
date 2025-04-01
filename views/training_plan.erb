@@ -1,48 +1,66 @@
 <div class="training_container">
-  <!-- Träningsdetaljer -->
-  <div class="training_details">
-    <h2 class="training_title"><%= @training_plan['name'] %></h2>
-    <p class="training_description"><%= @training_plan['description'] %></p>
-    <p class="training_goal"><strong>Mål:</strong> <%= @training_plan['goal'] %></p>
+    <!-- Träningsdetaljer -->
+    <div class="training_details">
+        <h2 class="training_title"><%= @training_plan['name'] %></h2>
+        <p class="training_description"><%= @training_plan['description'] %></p>
+        <p class="training_goal"><strong>Mål:</strong> <%= @training_plan['goal'].capitalize %></p>
 
-    <!-- Progress Loggning -->
-    <h3 class="progress_title">Logga din progress</h3>
-    <form action="/progress" method="post" class="progress_form">
-      <label for="type" class="progress_label">Typ (t.ex. vikt, bänkpress):</label>
-      <input type="text" id="type" name="type" class="progress_input" required>
-      
-      <label for="value" class="progress_label">Värde:</label>
-      <input type="number" step="0.1" id="value" name="value" class="progress_input" required>
-      
-      <label for="date" class="progress_label">Datum:</label>
-      <input type="date" id="date" name="date" class="progress_input" required>
-      
-      <input type="submit" value="Logga progress" class="progress_btn">
-    </form>
-    
-    <div class="back_link">
-      <a href="/training_plans">← Tillbaka till träningsplaner</a>
-    </div>
-  </div>
-
-  <!-- Schema -->
-  <div class="schedule_container">
-    <h3 class="schedule_title">Veckoschema</h3>
-    <div class="schedule">
-      <% @schedule.each do |day, exercises| %>
-        <div class="schedule_day <%= exercises.empty? ? 'rest-day' : 'training-day' %>">
-          <div class="day_name"><%= day %></div>
-          <% if exercises.empty? %>
-            Vilodag
-          <% else %>
-            <ul>
-              <% exercises.each do |exercise| %>
-                <li><%= exercise %></li>
-              <% end %>
-            </ul>
-          <% end %>
+        <!-- Progress Loggning -->
+        <h3 class="progress_title">Logga din progress</h3>
+        <form action="/progress" method="post" class="progress_form">
+            <label for="type" class="progress_label">Typ (t.ex. vikt, bänkpress):</label>
+            <input type="text" id="type" name="type" class="progress_input" required>
+            
+            <label for="value" class="progress_label">Värde:</label>
+            <input type="number" step="0.1" id="value" name="value" class="progress_input" required>
+            
+            <label for="date" class="progress_label">Datum:</label>
+            <input type="date" id="date" name="date" class="progress_input" required>
+            
+            <input type="submit" value="Logga progress" class="progress_btn">
+        </form>
+        
+        <div class="back_link">
+            <a href="/training_plans">← Tillbaka till träningsplaner</a>
         </div>
-      <% end %>
     </div>
-  </div>
+
+    <!-- Visa träningsplanens dagar -->
+    <div class="schedule_container">
+        <h3 class="schedule_title">Veckoschema</h3>
+        <div class="schedule">
+            <% @schedule.each do |day, exercises| %>
+                <div class="schedule_day <%= 'rest-day' if exercises.empty? %>">
+                    <h4><%= day %></h4>
+                    <% if exercises.empty? %>
+                        <p><strong>Vilodag</strong></p>
+                    <% else %>
+                        <p><strong>Träningsdag</strong> - Övningar:</p>
+                        <ul class="exercises">
+                            <% exercises.each do |exercise| %>
+                                <li><%= exercise %></li>
+                            <% end %>
+                        </ul>
+                    <% end %>
+                </div>
+            <% end %>
+        </div>
+    </div>
+
+    <!-- Progress Box -->
+    <div class="progress-box">
+        <h3>Progress</h3>
+        <% progress_logs = db.execute('SELECT * FROM progress WHERE user_id = ? ORDER BY date DESC', [session[:user_id]]) %>
+        <% if progress_logs.empty? %>
+            <p>Inga loggade framsteg än.</p>
+        <% else %>
+            <ul class="progress-list">
+                <% progress_logs.each do |log| %>
+                    <li>
+                        <strong><%= log['type'] %>:</strong> <%= log['value'] %> <strong>Datum:</strong> <%= log['date'] %>
+                    </li>
+                <% end %>
+            </ul>
+        <% end %>
+    </div>
 </div>

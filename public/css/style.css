@@ -313,117 +313,150 @@ button:hover {
   color: #d60000;
 }
 
-/* ========================== */
-/* 📐 Träningsplan Styling */
-/* ========================== */
-
+/* Training Container */
 .training_container {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  min-height: 100vh;
-  padding: 40px 80px;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
   background-color: #f4f4f4;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .training_details {
-  flex: 1;
-  max-width: 45%;
+  margin-bottom: 30px;
 }
 
 .training_title {
-  font-size: 24px;
-  text-align: center;
+  font-size: 2em;
   color: #333;
+  margin-bottom: 15px;
 }
 
 .training_description,
 .training_goal {
-  font-size: 16px;
-  margin-bottom: 12px;
+  font-size: 1.2em;
+  margin-top: 10px;
 }
 
-.schedule_title,
 .progress_title {
-  font-size: 18px;
   margin-top: 20px;
-  margin-bottom: 12px;
-}
-
-.schedule {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 10px;
-}
-
-.schedule_day {
-  padding: 12px;
-  border-radius: 5px;
-  font-size: 14px;
-  text-align: center;
-  min-height: 120px;
-}
-
-.day_name {
-  font-weight: bold;
-  margin-bottom: 6px;
-}
-
-.training-day {
-  background-color: #a8e6cf;
-  color: #006400;
-}
-
-.rest-day {
-  background-color: #ff8585;
-  color: #8b0000;
+  font-size: 1.5em;
 }
 
 .progress_form {
-  margin-top: 20px;
+  display: grid;
+  grid-gap: 15px;
+  margin-top: 10px;
 }
 
 .progress_label {
-  display: block;
-  font-size: 14px;
-  margin-bottom: 6px;
+  font-weight: bold;
 }
 
 .progress_input {
+  padding: 8px;
+  font-size: 1em;
   width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 14px;
-  margin-bottom: 12px;
 }
 
 .progress_btn {
-  width: 100%;
-  padding: 10px;
-  background-color: #007bff;
+  padding: 10px 20px;
+  background-color: #28a745;
   color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 16px;
+  font-size: 1em;
   cursor: pointer;
-  transition: background 0.3s ease;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s;
 }
 
 .progress_btn:hover {
-  background-color: #0056b3;
+  background-color: #218838;
 }
 
 .back_link {
-  text-align: center;
   margin-top: 20px;
 }
 
 .back_link a {
   color: #007bff;
   text-decoration: none;
+  font-weight: bold;
 }
 
-.back_link a:hover {
-  text-decoration: underline;
+.schedule_container {
+  margin-top: 40px;
+}
+
+.schedule_title {
+  font-size: 1.8em;
+  margin-bottom: 20px;
+}
+
+.schedule {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Two columns */
+  gap: 20px;
+}
+
+.schedule_day {
+  width: 244px;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 2px solid #ddd;
+  text-align: center;
+}
+
+.schedule_day h4 {
+  font-size: 1.4em;
+  margin-top: 0;
+}
+
+.schedule_day ul {
+  padding-left: 20px;
+}
+
+.schedule_day li {
+  list-style-type: square;
+}
+
+.schedule_day.rest-day {
+  background-color: #e9ecef;
+  border-color: #ccc;
+  color: #6c757d;
+}
+
+.schedule_day .exercises {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.schedule_day .exercises li {
+  margin-bottom: 8px;
+}
+
+.progress-box {
+  margin-top: 40px;
+}
+
+.progress-box h3 {
+  font-size: 1.5em;
+}
+
+.progress-list {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.progress-list li {
+  margin-bottom: 10px;
+}
+
+.progress-list strong {
+  color: #28a745;
 }

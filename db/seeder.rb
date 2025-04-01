@@ -31,7 +31,7 @@ class Seeder
         schedule TEXT  -- Nytt fält för att spara schemat
       );
     SQL
-
+2
     db.execute <<-SQL
       CREATE TABLE progress (
         id INTEGER PRIMARY KEY AUTOINCREMENT,

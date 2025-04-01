@@ -102,31 +102,65 @@ class App < Sinatra::Base
     time_per_session = params[:time_per_session]
   
     # Generera träningsschemat
-    schedule = TrainingGenerator.generate_schedule(goal, time_per_week, time_per_session)
+    @schedule = TrainingGenerator.generate_schedule(goal, time_per_week, time_per_session)
   
-    # Omvandla schemat till en enkel sträng (komma-separerad eller annat format)
-    schedule_string = schedule.map { |day, activity| "#{day}: #{activity}" }.join(", ")
+    # Debugga schemat innan det sparas
+    puts "Generated Schedule: #{@schedule.inspect}"
   
-    # Spara träningsplanen i databasen
+    # Spara träningsplanen i databasen som en sträng
+    schedule_string = @schedule.map { |day, activities| "#{day}: #{activities.join(', ')}" }.join(", ")
+  
     db.execute('INSERT INTO training_plans (user_id, name, description, goal, time_per_session, schedule) 
                 VALUES (?, ?, ?, ?, ?, ?)', 
                 [session[:user_id], "#{goal.capitalize} Plan", "Träningsplan för #{goal.capitalize}", 
                 goal, time_per_session, schedule_string])
   
     redirect '/training_plans'
-  end  
+  end
+  
+  
 
   # Visa en specifik träningsplan
   get '/training_plans/:id' do
     redirect '/login' unless session[:user_id]
-
+  
+    # Hämta träningsplanen från databasen
     @training_plan = db.execute('SELECT * FROM training_plans WHERE id = ?', [params[:id]]).first
-
-    # Hämta schemat som en vanlig sträng (ingen JSON.parse behövs)
-    @schedule = @training_plan['schedule']  # Detta är nu bara en enkel sträng
-
+  
+    # Debug: Kontrollera om @training_plan och schedule finns
+    if @training_plan && @training_plan['schedule']
+      puts "Training Plan: #{@training_plan.inspect}"  # Visar hela träningsplanen
+      puts "Schedule (raw): #{@training_plan['schedule']}"  # Visar endast rå 'schedule' sträng
+    else
+      puts "No schedule found for this training plan."
+    end
+  
+    # Debugga strängen innan vi försöker konvertera den till en hash
+    schedule_str = @training_plan['schedule']
+    puts "Raw schedule string: #{schedule_str}"
+  
+    # Försök skapa en hash, hantera att varje dag kan ha flera övningar
+    begin
+      @schedule = {}
+      schedule_str.split(', ').each do |entry|
+        # Splitta på första förekomsten av ':'
+        day, activity = entry.split(': ', 2)
+        # Om det finns en dag och aktivitet, spara det i hash
+        if day && activity
+          # Dela aktiviteter på kommatecken för att skapa en array av övningar
+          @schedule[day] = activity.split(', ') 
+        end
+      end
+    rescue => e
+      puts "Error converting schedule string to hash: #{e.message}"
+      @schedule = {}
+    end
+  
+    # Debug: Skriv ut @schedule för att kontrollera formatet
+    puts "Schedule after processing: #{@schedule.inspect}"
+  
     erb :training_plan
-  end
+  end  
 
   post '/training_plans/:id/delete' do |id|
     db.execute("DELETE FROM training_plans WHERE id = ?", id)
