@@ -7,17 +7,26 @@
     <link rel="stylesheet" type="text/css" href="/css/style.css">
 </head>
 <body>
-    <div class="user-info" style="position: absolute; top: 10px; right: 20px;">
+    <!-- Inloggningsinfo och utloggning -->
+    <div class="user-info-box" style="position: absolute; top: 10px; right: 20px;">
         <% if current_user %>
-            Inloggad som: <%= current_user['username'] %>
+            <span class="user-info-text">Inloggad som: <%= current_user['username'] %></span>
             <form action="/logout" method="get" style="display: inline;">
                 <button type="submit" class="logout-btn">Logga ut</button>
             </form>
         <% else %>
-            Ej inloggad
+            <span class="user-info-text">Ej inloggad</span>
         <% end %>
     </div>
 
+    <!-- Adminflik -->
+    <% if session[:role] == 'admin' %>
+        <nav class="admin-nav-box" style="position: absolute; top: 10px; left: 20px;">
+            <a href="/admin" class="admin-nav-link">🛠 Adminpanel</a>
+        </nav>
+    <% end %>
+
+    <!-- Sidinnehåll -->
     <%= yield %>
 </body>
 </html>

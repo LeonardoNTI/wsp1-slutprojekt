@@ -5,7 +5,6 @@ require_relative 'training_generator'
 
 set :public_folder, File.dirname(__FILE__) + '/public'
 
-
 class App < Sinatra::Base
   enable :sessions
 
@@ -108,7 +107,7 @@ class App < Sinatra::Base
     puts "Generated Schedule: #{@schedule.inspect}"
   
     # Spara träningsplanen i databasen som en sträng
-    schedule_string = @schedule.map { |day, activities| "#{day}: #{activities.join(', ')}" }.join(", ")
+    schedule_string = @schedule.map { |day, activities| "#{day}: #{Array(activities).join(', ')}" }.join(", ")
   
     db.execute('INSERT INTO training_plans (user_id, name, description, goal, time_per_session, schedule) 
                 VALUES (?, ?, ?, ?, ?, ?)', 
@@ -117,7 +116,6 @@ class App < Sinatra::Base
   
     redirect '/training_plans'
   end
-  
   
 
   # Visa en specifik träningsplan
@@ -209,10 +207,59 @@ class App < Sinatra::Base
   # ADMIN-FUNKTION 
   get '/admin' do
     redirect '/login' unless session[:role] == 'admin'
-
+  
     @users = db.execute('SELECT * FROM users')
-    @plans = db.execute('SELECT * FROM training_plans')
-
+    
+    # Hämta alla träningsplaner och säkerställ att det är en lista, även om den är tom
+    @training_plans = db.execute('SELECT * FROM training_plans') || []
+  
     erb :admin
   end
+  
+
+  post '/admin/delete_user/:id' do
+    redirect '/login' unless session[:role] == 'admin'
+  
+    user_id = params[:id]
+  
+    # Skydda mot att admin raderar sig själv
+    if user_id.to_i != session[:user_id]
+      db.execute('DELETE FROM users WHERE id = ?', [user_id])
+      db.execute('DELETE FROM training_plans WHERE user_id = ?', [user_id])
+    end
+  
+    redirect '/admin'
+  end
+  
+  post '/admin/promote_user/:id' do
+    redirect '/login' unless session[:role] == 'admin'
+  
+    user_id = params[:id]
+    db.execute('UPDATE users SET role = "admin" WHERE id = ?', [user_id])
+  
+    redirect '/admin'
+  end
+  
+  post '/admin/toggle_role/:id' do
+    redirect '/login' unless session[:role] == 'admin'
+  
+    user = db.execute('SELECT * FROM users WHERE id = ?', [params[:id]]).first
+    if user
+      new_role = user['role'] == 'admin' ? 'user' : 'admin'
+      db.execute('UPDATE users SET role = ? WHERE id = ?', [new_role, params[:id]])
+    end
+  
+    redirect '/admin'
+  end
+  
+  post '/admin/delete_training_plan/:plan_id' do
+    plan_id = params[:plan_id]
+    
+    # Hämta träningsplanen från databasen
+    db.execute('DELETE FROM training_plans WHERE id = ?', [plan_id])
+  
+    redirect back
+  end
+  
+  
 end

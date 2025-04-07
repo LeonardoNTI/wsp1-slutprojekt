@@ -460,3 +460,183 @@ button:hover {
 .progress-list strong {
   color: #28a745;
 }
+
+.edit-button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+  margin-right: 20px;
+}
+
+.edit-button {
+  background-color: #ffc107;
+  color: #333;
+  border: none;
+  padding: 10px 15px;
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.edit-button:hover {
+  background-color: #e0a800;
+}
+
+/* ADMIN NAVIGATION */
+.admin-nav-box {
+  background-color: #1e1e1e;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+.admin-nav-link {
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.admin-nav-link:hover {
+  text-decoration: underline;
+  color: #00ffcc;
+}
+
+/* USER INFO */
+.user-info-box {
+  background-color: #ffffff;
+  padding: 8px 15px;
+  border-radius: 6px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+}
+
+.user-info-text {
+  font-size: 14px;
+  margin-right: 10px;
+  color: #333;
+}
+
+/* LOGGA UT-KNAPP */
+.logout-btn {
+  background-color: #e74c3c;
+  color: white;
+  padding: 5px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.logout-btn:hover {
+  background-color: #c0392b;
+}
+
+.adminpanel-header {
+  font-size: 32px;
+  margin-bottom: 20px;
+  color: #222;
+}
+
+.adminpanel-container {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.adminpanel-subtitle {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.adminpanel-user-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.adminpanel-user-table th,
+.adminpanel-user-table td {
+  border: 1px solid #ccc;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.adminpanel-user-table th {
+  background-color: #e0e0e0;
+}
+
+.adminpanel-inline-form {
+  display: inline-block;
+  margin-right: 5px;
+}
+
+.adminpanel-btn-danger {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.adminpanel-btn-danger:hover {
+  background-color: #c0392b;
+}
+
+.adminpanel-btn-promote {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  margin-left: 5px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.adminpanel-btn-unpromote {
+  background-color: #f39c12;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  margin-left: 5px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.adminpanel-btn-promote:hover {
+  background-color: #1e8449;
+}
+
+/* Döljer dropdownen som standard */
+.dropdown-content {
+  display: none;
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #f1f1f1;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.training-plan-item {
+  margin-bottom: 10px;
+}
+
+/* Mer info knapp stil */
+.adminpanel-btn-info {
+  background-color: #4CAF50; /* Grön färg */
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.adminpanel-btn-info:hover {
+  background-color: #45a049;
+}

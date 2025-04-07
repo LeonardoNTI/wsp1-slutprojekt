@@ -1,4 +1,11 @@
 <div class="training_container">
+
+    <div class="edit-button-container">
+        <form action="/training_plans/<%= @training_plan['id'] %>/edit" method="get">
+            <button type="submit" class="edit-button">✏️ Redigera</button>
+        </form>
+    </div>
+
     <!-- Träningsdetaljer -->
     <div class="training_details">
         <h2 class="training_title"><%= @training_plan['name'] %></h2>
@@ -30,22 +37,21 @@
         <h3 class="schedule_title">Veckoschema</h3>
         <div class="schedule">
             <% @schedule.each do |day, exercises| %>
-                <div class="schedule_day <%= 'rest-day' if exercises.empty? %>">
+                <div class="schedule_day <%= 'rest-day' if exercises == "Vilodag" %>">
                     <h4><%= day %></h4>
-                    <% if exercises.empty? %>
+                    <% if exercises == "Vilodag" %>
                         <p><strong>Vilodag</strong></p>
                     <% else %>
                         <p><strong>Träningsdag</strong> - Övningar:</p>
                         <ul class="exercises">
-                            <% exercises.each do |exercise| %>
-                                <li><%= exercise %></li>
-                            <% end %>
+                            <li><%= exercises %></li>
                         </ul>
                     <% end %>
                 </div>
             <% end %>
         </div>
     </div>
+
 
     <!-- Progress Box -->
     <div class="progress-box">
