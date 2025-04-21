@@ -464,11 +464,13 @@ button:hover {
 .edit-button-container {
   display: flex;
   justify-content: flex-end;
+  margin-top: 20px;
   margin-bottom: 10px;
   margin-right: 20px;
 }
 
 .edit-button {
+  margin-top: 20px;
   background-color: #ffc107;
   color: #333;
   border: none;
@@ -485,22 +487,21 @@ button:hover {
 
 /* ADMIN NAVIGATION */
 .admin-nav-box {
-  background-color: #1e1e1e;
   padding: 8px 12px;
   border-radius: 6px;
 }
 
 .admin-nav-link {
-  color: #fff;
+  color: #515151;
   font-weight: 600;
   text-decoration: none;
-  font-size: 16px;
+  font-size: 12px;
   transition: background-color 0.3s;
 }
 
 .admin-nav-link:hover {
   text-decoration: underline;
-  color: #00ffcc;
+  color: #000000;
 }
 
 /* USER INFO */
